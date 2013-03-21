@@ -65,6 +65,7 @@ def main():
   try:
     for url_prefix in args:
       for url, d in reader.itemsiter(url_prefix):
+        sys.stderr.write('Fetching %s\n' % (url,))
         print arc_file(s3, bucket_name, d)
   except KeyboardInterrupt:
     pass
