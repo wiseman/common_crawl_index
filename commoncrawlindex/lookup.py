@@ -12,13 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-"""Looks up URLs in the Common Crawl URL Index.
-
-Usage: %s <url prefix>
-
-Prints a list of URLs that match the specified prefix along with metadata.
+"""Prints a list of URLs from the Common Crawl Index that match a
+prefix.
 """
 
+import optparse
 import struct
 import sys
 
@@ -26,6 +24,13 @@ import boto
 
 import commoncrawlindex
 from commoncrawlindex import pbtree
+
+
+OPTION_LIST = (
+    optparse.make_option('-m', '--print-metadata',
+            default=False, action='store_true', dest='print_metadata',
+            help='Print metadata.'),
+)
 
 
 class BotoMap(object):
@@ -59,14 +64,21 @@ class BotoMap(object):
         return ''
 
 
-def print_usage():
-  usage_doc = sys.modules[__name__].__doc__
-  usage_doc = usage_doc.replace('%s', sys.argv[0])
-  sys.stderr.write(usage_doc)
+def parse_options(arguments):
+  parser = optparse.OptionParser(
+    option_list=OPTION_LIST,
+    usage='%prog [options] <URL prefix>',
+    description=sys.modules[__name__].__doc__)
+  options, args = parser.parse_args(arguments)
+  if len(args) != 1:
+    parser.print_help()
+    sys.exit(2)
+  return options, args
 
 
 def main():
-  if len(sys.argv) != 2:
+  options, args = parse_options(sys.argv[1:])
+  if len(args) != 1:
     print_usage()
     sys.exit(2)
 
@@ -88,8 +100,11 @@ def main():
   )
 
   try:
-    for url, d in reader.itemsiter(sys.argv[1]):
-      print url, d
+    for url, d in reader.itemsiter(args[0]):
+      if options.print_metadata:
+        print url, d
+      else:
+        print url
   except KeyboardInterrupt:
     pass
 
