@@ -34,12 +34,8 @@ OPTION_LIST = (
 
 
 class BotoMap(object):
-  def __init__(self, bucket, key_name, access_key=None, access_secret=None):
-    if access_key and access_secret:
-      self.conn = boto.connect_s3(access_key, access_secret)
-    else:
-      self.conn = boto.connect_s3(anon=True)
-    bucket = self.conn.lookup(bucket)
+  def __init__(self, s3, bucket_name, key_name):
+    bucket = s3.lookup(bucket_name)
     self.key = bucket.lookup(key_name)
     self.block_size = 2 ** 16
     self.cached_block = -1
@@ -78,13 +74,11 @@ def parse_options(arguments):
 
 def main():
   options, args = parse_options(sys.argv[1:])
-  if len(args) != 1:
-    print_usage()
-    sys.exit(2)
-
+  s3 = boto.connect_s3(anon=True)
   mmap = BotoMap(
+    s3,
     'aws-publicdatasets',
-    '/common-crawl/projects/url-index/url-index.1356128792'
+    '/common-crawl/projects/url-index/url-index.1356128792',
     )
 
   reader = pbtree.PBTreeDictReader(
