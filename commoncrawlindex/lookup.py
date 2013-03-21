@@ -64,7 +64,7 @@ class BotoMap(object):
 def parse_options(arguments):
   parser = optparse.OptionParser(
     option_list=OPTION_LIST,
-    usage='%prog [options] <URL prefix>',
+    usage='%prog [options] <reversed URL prefix>',
     description=sys.modules[__name__].__doc__)
   options, args = parser.parse_args(arguments)
   if len(args) != 1:
