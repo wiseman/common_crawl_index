@@ -26,11 +26,12 @@ import commoncrawlindex
 from commoncrawlindex import pbtree
 
 
-OPTION_LIST = (
-    optparse.make_option('-m', '--print-metadata',
-            default=False, action='store_true', dest='print_metadata',
-            help='Print metadata.'),
-)
+OPTION_LIST = [
+  optparse.make_option(
+    '-m', '--print-metadata',
+    default=False, action='store_true', dest='print_metadata',
+    help='Print metadata.'),
+  ]
 
 
 class BotoMap(object):
