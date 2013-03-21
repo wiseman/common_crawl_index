@@ -1,5 +1,6 @@
 """Fetches a URL from the Common Crawl dataset.
 """
+
 import gzip
 import optparse
 import StringIO

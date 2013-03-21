@@ -109,9 +109,16 @@ Fetching com.metafilter.ask/100020/How-can-I-investigateremedy-possibly-misleadi
 [etc.]
 ```
 
-And if you're downloading lots of data, you may want to keep it in its
+If you're downloading lots of data, you may want to keep it in its
 compressed (gzipped) format:
 
 ```
 $ cci_fetch --compress --output-to-file com.metafilter
+```
+
+Here's how to download everything to individual gzipped files using 20
+parallel `cci_fetch` processes:
+
+```
+$ cci_lookup com.metafilter | xargs -n 100 -P 20 cci_fetch -C -O
 ```
