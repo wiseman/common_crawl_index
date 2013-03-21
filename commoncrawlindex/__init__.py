@@ -17,7 +17,7 @@ import urlparse
 
 
 def reversehost(url):
-# reverse netlocation http://www.example.com/foo -> com.example.www/foo:http
+  # reverse netlocation http://www.example.com/foo -> com.example.www/foo:http
   url = urlparse.urlsplit(str(url))
   netloc = url.netloc.split(':')
   host = netloc[0]
