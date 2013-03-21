@@ -30,7 +30,7 @@ prefix on the command line and it will write every matching URL in the
 index to stdout:
 
 ```
-$ cci_lookup com.metafilter  # Find any URL at metafilter.com
+$ cci_lookup com.metafilter  # Find every URL at metafilter.com
 com.metafilter.ask/100000/Ideas-for-pureed-food-for-a-30something-who-is-really-picky:http
 com.metafilter.ask/100014/How-to-care-for-my-geek-husband:http
 com.metafilter.ask/100020/How-can-I-investigateremedy-possibly-misleading-loan-agreements-from-several-years-ago:http
@@ -106,6 +106,7 @@ $ cci_fetch --output-to-file com.metafilter
 Fetching com.metafilter.ask/100000/Ideas-for-pureed-food-for-a-30something-who-is-really-picky:http
 Fetching com.metafilter.ask/100014/How-to-care-for-my-geek-husband:http
 Fetching com.metafilter.ask/100020/How-can-I-investigateremedy-possibly-misleading-loan-agreements-from-several-years-ago:http
+[etc.]
 ```
 
 And if you're downloading lots of data, you may want to keep it in its
@@ -114,6 +115,3 @@ compressed (gzipped) format:
 ```
 $ cci_fetch --compress --output-to-file com.metafilter
 ```
-
-
-
