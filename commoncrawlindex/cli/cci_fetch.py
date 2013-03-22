@@ -11,9 +11,8 @@ import sys
 import boto
 import gflags
 
-from commoncrawlindex import pbtree
-from commoncrawlindex.cli import lookup
-from commoncrawlindex.cli import s3
+from commoncrawlindex import s3
+from commoncrawlindex import index
 
 FLAGS = gflags.FLAGS
 
@@ -70,9 +69,8 @@ def main():
   if len(argv) < 2:
     sys.stderr.write('Error: Wrong number of arguments.\n')
     sys.exit(1)
-  index_stream = lookup.open_index_stream()
-  index_reader = pbtree.open_pbtree_reader(index_stream)
-  s3_conn = s3.get_s3_conn()
+  index_reader = index.open_index_reader()
+  s3_conn = s3.get_s3_connection()
   try:
     for url_prefix in argv[1:]:
       for url, d in index_reader.itemsiter(url_prefix):

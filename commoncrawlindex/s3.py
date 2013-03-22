@@ -1,4 +1,7 @@
+"""High-level S3 functions."""
+
 import re
+import threading
 
 import boto
 
@@ -26,17 +29,22 @@ def is_s3_uri(path):
   return not(not m)
 
 
-g_s3_conn = None
+g_s3_connections = threading.local()
 
 
-def get_s3_conn():
-  global g_s3_conn
-  if not g_s3_conn:
-    g_s3_conn = boto.connect_s3(anon=True)
-  return g_s3_conn
+def get_s3_connection():
+  """Gets an S3 (boto) connection.
+
+  Connections are cached per-thread.
+  """
+  global g_s3_connections
+  if not hasattr(g_s3_connections, 'connection'):
+    g_s3_connections.connection = boto.connect_s3(anon=True)
+  return g_s3_connections.connection
 
 
 class BotoMap(object):
+  """A random-access interface to an S3 file."""
   def __init__(self, s3_conn, s3_uri):
     bucket_name, key_name = parse_s3_uri(s3_uri)
     bucket = s3_conn.lookup(bucket_name)

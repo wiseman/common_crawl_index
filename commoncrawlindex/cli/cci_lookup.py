@@ -9,8 +9,7 @@ import sys
 
 import gflags
 
-from commoncrawlindex.cli import lookup
-from commoncrawlindex import pbtree
+from commoncrawlindex import index
 
 FLAGS = gflags.FLAGS
 
@@ -33,8 +32,7 @@ def main():
   if len(argv) != 2:
     sys.stderr.write('Error: Wrong number of arguments.\n')
     sys.exit(1)
-  index_stream = lookup.open_index_stream()
-  index_reader = pbtree.open_pbtree_reader(index_stream)
+  index_reader = index.open_index_reader()
   try:
     for url, d in index_reader.itemsiter(argv[1]):
       if FLAGS.print_metadata:
