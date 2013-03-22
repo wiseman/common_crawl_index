@@ -1,6 +1,5 @@
 # commoncrawlindex
 
-
 Common Crawl is an open repository of web crawl data that can be
 accessed and analyzed by everyone.
 
@@ -11,14 +10,21 @@ dataset](https://commoncrawl.atlassian.net/wiki/display/CRWL/About+the+Data+Set)
 
 ## Installation
 
+From github:
+
 ```
 $ git clone git@github.com:wiseman/common_crawl_index.git
 $ cd common_crawl_index
 $ python setup.py install
 ```
 
-## Usage
+Using pip:
 
+```
+$ pip install commoncrawlindex
+```
+
+## Usage
 
 You can use commoncrawlindex to find URLs that are in the Common Crawl
 dataset and you can use it to fetch the stored contents of those URLs.
