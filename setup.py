@@ -46,6 +46,7 @@ settings = dict(
   entry_points={
     'console_scripts': [
       'cci_lookup = commoncrawlindex.cli.cci_lookup:main',
+      'cci_fetch = commoncrawlindex.cli.cci_fetch:main'
       ],
     },
   )
