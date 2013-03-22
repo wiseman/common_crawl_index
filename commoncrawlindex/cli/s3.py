@@ -26,6 +26,16 @@ def is_s3_uri(path):
   return not(not m)
 
 
+g_s3_conn = None
+
+
+def get_s3_conn():
+  global g_s3_conn
+  if not g_s3_conn:
+    g_s3_conn = boto.connect_s3(anon=True)
+  return g_s3_conn
+
+
 class BotoMap(object):
   def __init__(self, s3_conn, s3_uri):
     bucket_name, key_name = parse_s3_uri(s3_uri)
