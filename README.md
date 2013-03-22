@@ -120,5 +120,5 @@ Here's how to download everything to individual gzipped files using 20
 parallel `cci_fetch` processes:
 
 ```
-$ cci_lookup com.metafilter | xargs -n 100 -P 20 cci_fetch -C -O
+$ cci_lookup com.metafilter | xargs -d '\n' -n 100 -P 20 cci_fetch -C -O
 ```
