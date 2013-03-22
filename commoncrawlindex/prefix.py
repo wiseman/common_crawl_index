@@ -37,7 +37,7 @@ def common(s1, s2):
 
 
 def significant(s1, s2):
-  """Given two strings s1 and s2, and assuming s2 > s1 returns the
+  """Given two strings s1 and s2 and assuming s2 > s1, returns the
   character that make s2 greater.
   """
   cl = commonlen(s1, s2)

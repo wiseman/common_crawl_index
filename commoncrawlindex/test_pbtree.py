@@ -25,12 +25,11 @@ class TestPBTree(unittest.TestCase):
   def test_btree_index(self):
     t = tempfile.TemporaryFile()
     tree = pbtree.PBTreeWriter(t)
-    tree.add("blah", 1)
+    tree.add('blah', 1)
     #pbtree.commit()
 
     #t.seek(0)
     packet = tree.data_segment.write_buffer  # t.read()
-
     eq_(packet, 'blah\x00\x01\x00\x00\x00\x00\x00\x00\x00')
 
   def test_one_key_per_block_writer(self):
