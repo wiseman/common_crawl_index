@@ -28,6 +28,18 @@ from commoncrawlindex import pbtree
 
 OPTION_LIST = [
   optparse.make_option(
+    '-b', '--s3-bucket-name',
+    default='aws-publicdatasets', dest='s3_bucket_name',
+    help='S3 bucket name of the Common Crawl Index.'),
+  optparse.make_option(
+    '-k', '--s3-key',
+    default='/common-crawl/projects/url-index/url-index.1356128792',
+    dest='s3_key', help='S3 key of the Common Crawl Index.'),
+  optparse.make_option(
+    '-l', '--local-index-file',
+    default=None, dest='local_index_file',
+    help='Path to local index file to use instead of the index in S3.'),
+  optparse.make_option(
     '-m', '--print-metadata',
     default=False, action='store_true', dest='print_metadata',
     help='Print metadata.'),
@@ -75,25 +87,16 @@ def parse_options(arguments):
 
 def main():
   options, args = parse_options(sys.argv[1:])
-  s3 = boto.connect_s3(anon=True)
-  mmap = BotoMap(
-    s3,
-    'aws-publicdatasets',
-    '/common-crawl/projects/url-index/url-index.1356128792',
-    )
-
-  reader = pbtree.PBTreeDictReader(
-    mmap,
-    value_format='<QQIQI',
-    item_keys=(
-      'arcSourceSegmentId',
-      'arcFileDate',
-      'arcFilePartition',
-      'arcFileOffset',
-      'compressedSize'
-    )
-  )
-
+  stream = None
+  if options.local_index_file:
+    stream = open(options.local_index_file, 'rb')
+  else:
+    s3 = boto.connect_s3(anon=True)
+    stream = BotoMap(
+      s3,
+      options.s3_bucket_name,
+      options.s3_key)
+  reader = pbtree.open_pbtree_reader(stream)
   try:
     for url, d in reader.itemsiter(args[0]):
       if options.print_metadata:

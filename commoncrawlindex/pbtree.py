@@ -480,3 +480,16 @@ class IndexBlockReader(object):
 
   def read_rest_of_block(self, buffer):
     return buffer.read()
+
+
+def open_pbtree_reader(stream):
+  reader = PBTreeDictReader(
+    stream,
+    value_format='<QQIQI',
+    item_keys=(
+      'arcSourceSegmentId',
+      'arcFileDate',
+      'arcFilePartition',
+      'arcFileOffset',
+      'compressedSize'))
+  return reader
