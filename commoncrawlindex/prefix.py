@@ -17,9 +17,7 @@ import itertools
 
 
 def commonlen(s1, s2):
-  """
-  Returns the length of the common prefix
-  """
+  """Returns the length of the common prefix."""
   # given "hi", "hip"
   # izip_longest("hi", "hip") -> ('h','h'), ('i','i'), (None, 'p')
   # enumerate -> (0,('h','h')), (1,('i','i')), (2,(None, 'p'))

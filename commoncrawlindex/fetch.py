@@ -70,7 +70,7 @@ def main():
 
   reader = pbtree.PBTreeDictReader(
     mmap,
-    value_format="<QQIQI",
+    value_format='<QQIQI',
     item_keys=(
       'arcSourceSegmentId',
       'arcFileDate',

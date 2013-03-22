@@ -1,20 +1,21 @@
 # <data segment> :: = <item> (<item> | ( {<null>} <null>))
 # <item> ::= <key> <null> <location pointer>
 
-# 
+#
 #
 
-from unittest import TestCase
-from .prefix import signifigant
+import unittest
+
+from commoncrawlindex import prefix
 
 
-class TestIndexMapCase(TestCase):
+class TestIndexMapCase(unittest.TestCase):
   def test(self):
     class P():
       pass
     params = P()
-  
-    results =[]
+
+    results = []
     for partition_number, input in enumerate(inputs):
       params.last_key = None
       params.partition_number = partition_number
@@ -22,8 +23,7 @@ class TestIndexMapCase(TestCase):
         for item in map_block(iter(block), params):
           results.append(item)
 
-    self.assertSequenceEqual(results, final)  
-
+    self.assertSequenceEqual(results, final)
 
 
 file1 = [
@@ -47,7 +47,7 @@ file1 = [
   ],
 ]
 
-file2= [
+file2 = [
   [
     'key13feee',
     'key14',
@@ -63,26 +63,28 @@ file2= [
 ]
 
 
-final=(
-  (0,"key01"),
-  (0,"key03b"),
-  (0,"key08za"),
-  (1,"key13feee"),
-  (1,"key16b")
+final = (
+  (0, 'key01'),
+  (0, 'key03b'),
+  (0, 'key08za'),
+  (1, 'key13feee'),
+  (1, 'key16b')
 )
 
 inputs = [file1, file2]
+
 
 def map_block(block, params):
   # yield first item and last
 
   first_key = block.next()
   assert first_key.find('\0') == -1
-  
+
   if params.last_key is None:
     yield params.partition_number, first_key
   else:
-    yield params.partition_number, signifigant(params.last_key, first_key)
+    yield (params.partition_number,
+           prefix.significant(params.last_key, first_key))
 
   second_to_last = None
   for key in block:
@@ -93,8 +95,3 @@ def map_block(block, params):
     params.last_key = second_to_last
   else:
     params.last_key = first_key
-  
-  
-  
-  
-  

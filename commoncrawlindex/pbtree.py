@@ -32,14 +32,12 @@ OFFSET_SIZE = struct.calcsize(OFFSET_FMT)
 
 
 class PBTreeWriter(object):
-  """
-  Constructs a disk based prefixed btreefor a sacalr value.
-  """
-
-  def __init__(self, stream, block_size=MB, terminator='\0', value_format="<Q"):
+  """Constructs a disk based prefixed btree for a scalar value."""
+  def __init__(self, stream, block_size=MB, terminator='\0',
+               value_format='<Q'):
     self.stream = stream
 
-    assert len(terminator) == 1, "terminator must be of legth 1"
+    assert len(terminator) == 1, 'terminator must be of legth 1'
 
     self.value_format = value_format
     self.value_size = struct.calcsize(self.value_format)
@@ -48,27 +46,23 @@ class PBTreeWriter(object):
 
     self.last_key = ''
 
-    self.data_segment  = DataWriter(TemporaryFile(), block_size, terminator, self)
+    self.data_segment = DataWriter(
+      TemporaryFile(), block_size, terminator, self)
     self.index_segment = IndexWriter(stream, block_size, terminator)
-
 
   def pack_value(self, value):
     return struct.pack(self.value_format, value)
 
-
   def add(self, key, value):
-    self.data_segment.add(key,value)
+    self.data_segment.add(key, value)
     self.last_key = key
-
 
   def on_new_block(self, key):
     prefix_key = prefix.significant(self.last_key, key)
     self.index_segment.add(0, prefix_key)
 
-
-  def on_item_exceeds_block_size(self,key,value):
-    raise ValueError("key '%s'  exceeds block size" % key)
-
+  def on_item_exceeds_block_size(self, key, value):
+    raise ValueError("key '%s' exceeds block size" % key)
 
   def commit(self):
     out = self.stream
@@ -83,27 +77,23 @@ class PBTreeWriter(object):
       else:
         out.write(bytes)
 
-
   def close(self):
     self.commit()
     self.stream.close()
 
+
 class PBTreeSequenceWriter(PBTreeWriter):
+  """Writes a sequence to a pbtree, it assumes that an appropriate
+  value_format is specified and that every sequence passed to add() is
+  the same length.
   """
-  Writes a sequence to a pbtree, it assumes that an appropriate value_format
-  is specified and that every sequence passed to add() is the same length.
-
-  """
-
   def  pack_value(self, value):
     # this assumes an appropriate value_format was specified
     return struct.pack(self.value_format, *value)
 
-class PBTreeDictWriter(PBTreeWriter):
-  """
-  Writes a dictionary to a pbtree
-  """
 
+class PBTreeDictWriter(PBTreeWriter):
+  """Writes a dictionary to a pbtree."""
   def __init__(self, stream, item_keys, **options):
     self.item_keys = item_keys
     super(PBTreeDictWriter, self).__init__(stream, **options)
@@ -113,12 +103,8 @@ class PBTreeDictWriter(PBTreeWriter):
     return struct.pack(self.value_format, *value)
 
 
-
 class PBTreeReader(object):
-  """
-  Reads a prefixed btree
-  """
-
+  """Reads a prefixed btree."""
   @classmethod
   def parse(cls, stream, block_size):
     while True:
@@ -128,44 +114,38 @@ class PBTreeReader(object):
       for offset, key in IndexBlockReader(block):
         yield offset, key
 
-  def __init__(self, mmap, terminator='\0', value_format="<Q"):
+  def __init__(self, mmap, terminator='\0', value_format='<Q'):
     self.mmap = mmap
     #self.mmap.seek(0)
     self.terminator = terminator
     self.value_format = value_format
     self.value_size = struct.calcsize(self.value_format)
-
-
-    self.header_fmt = "<II"
+    self.header_fmt = '<II'
     self.header_size = struct.calcsize(self.header_fmt)
 
     self.block_size, self.index_block_size = self.fetch_header()
-
 
   def fetch(self, start, end):
     return self.mmap[start:end]
 
   def fetch_header(self):
-    return struct.unpack(self.header_fmt, self.fetch(0,self.header_size))
+    return struct.unpack(self.header_fmt, self.fetch(0, self.header_size))
 
   def block(self, block_number):
-    """
-    Returns the block for given block number
-    """
+    """Returns the block for given block number."""
 
     offset = self.block_offset(block_number)
-    block = self.fetch(offset, offset+self.block_size)
+    block = self.fetch(offset, offset + self.block_size)
     return IndexBlockReader(block)
 
   def block_offset(self, block_number):
-    return self.header_size + (self.block_size*block_number)
+    return self.header_size + (self.block_size * block_number)
 
   def count_levels(self):
-    """Return the number of 'levels' in the index. This number represents
-    how many seeks have to be preformed before finding
-    the starting data block"""
-
-
+    """Return the number of 'levels' in the index. This number
+    represents how many seeks have to be preformed before finding the
+    starting data block.
+    """
     block_number = 0
     block = self.block(block_number)
     levels = 1
@@ -181,13 +161,11 @@ class PBTreeReader(object):
         # it's the start of the data segments,
         return levels
 
-
   def expected_location(self, key):
-    """
-    Given a key, return the expected starting location for the key in the data
-    segment. The return value is only the location  where the key "should" be
-    not neccesarily where it is. This enables range queries
-
+    """Given a key, return the expected starting location for the key
+    in the data segment. The return value is only the location where
+    the key "should" be not neccesarily where it is. This enables
+    range queries.
     """
     if key == '':
       start_block = self.index_block_size
@@ -195,12 +173,10 @@ class PBTreeReader(object):
 
     starting_block = self.find_starting_data_block(key)
     offset = self.block_offset(starting_block)
-    data = self.fetch(offset,offset+self.block_size)
+    data = self.fetch(offset, offset + self.block_size)
 
-
-    # linear scan through the block, looking for the position of the stored key
-    # that is greater than the given key
-
+    # linear scan through the block, looking for the position of the
+    # stored key that is greater than the given key
     start = 0
     loc = 0
     while True:
@@ -214,13 +190,10 @@ class PBTreeReader(object):
       else:
         start = pos + 1 + self.value_size
 
-
-
-  def find_starting_data_block(self,key):
+  def find_starting_data_block(self, key):
+    """ Return the number of the first data block where the key should
+    be found.
     """
-    Return the number of the first data block where the key should be found.
-    """
-
     block_number = 0
     block = self.block(block_number)
 
@@ -249,7 +222,6 @@ class PBTreeReader(object):
       if key.startswith(prefix):
         yield value
 
-
   def items(self, prefix=''):
     return list(self.itemsiter(prefix))
 
@@ -259,37 +231,31 @@ class PBTreeReader(object):
 
     # skip over keys in the first block
     first_block = blocks.next()
-    for key,value in itertools.dropwhile(lambda (k,v): not k.startswith(prefix), self.dataiter(first_block)):
+    for key, value in itertools.dropwhile(
+      lambda (k, v): not k.startswith(prefix), self.dataiter(first_block)):
       if not key.startswith(prefix):
         return
-      yield key,value
+      yield key, value
 
     for block in blocks:
-      for key,value in self.dataiter(block):
+      for key, value in self.dataiter(block):
         if not key.startswith(prefix):
           return
         else:
-          yield key,value
-
+          yield key, value
 
   def parse_value(self, bytes):
-    """
-    Returns a scalar
-    """
+    """Returns a scalar."""
     return struct.unpack(
       self.value_format,
       bytes
     )[0]
 
-
   def blockiter(self, block_number):
-    """
-    Iterate over blocks starting with the given block_number
-    """
-
+    """Iterate over blocks starting with the given block_number."""
     while True:
       offset = self.block_offset(block_number)
-      block = self.mmap[offset:offset+self.block_size]
+      block = self.mmap[offset:offset + self.block_size]
       if block:
         yield block
         block_number += 1
@@ -307,14 +273,12 @@ class PBTreeDictReader(PBTreeReader):
     super(PBTreeDictReader, self).__init__(stream, **options)
 
   def parse_value(self, bytes):
-    """
-    Returns a dictionary
-    """
-
+    """Returns a dictionary."""
     return dict(zip(
       self.item_keys,
-      struct.unpack(self.value_format,bytes)
+      struct.unpack(self.value_format, bytes)
     ))
+
 
 ####
 # Lower level constructs whose functionality has been seperated out to make
@@ -335,14 +299,13 @@ class DataWriter(object):
     self.stream = stream
     self.write_buffer = bytearray()
 
-
   def add(self, key, value):
 
     packet = self.delegate.pack_value(value)
     size = len(key) + self.term_length + len(packet)
 
     if size > self.block_size:
-      self.delegate.on_item_exceeds_block_size(key,value)
+      self.delegate.on_item_exceeds_block_size(key, value)
       return
 
     if size > self.remaining:
@@ -373,16 +336,16 @@ class DataWriter(object):
     self.stream.seek(0)
     self.finalized = True
 
-  def read(self, bytes = None):
-    """
-    Returns bytes written to the stream.
+  def read(self, bytes=None):
+    """Returns bytes written to the stream.
 
-    It is an error to call this method prior to calling DataWriter.finish()
+    It is an error to call this method prior to calling DataWriter.finish().
     """
     return self.stream.read(bytes)
 
+
 class IndexWriter(object):
-  def __init__(self, stream,  block_size, terminator, pointer_format='<I'):
+  def __init__(self, stream, block_size, terminator, pointer_format='<I'):
     self.stream = stream
     self.block_size = block_size
     self.terminator = terminator
@@ -395,12 +358,9 @@ class IndexWriter(object):
     self.push_index()
 
   def add(self, level, key):
-    """
-    Add's the key to the given index level
-    """
+    """Adds the key to the given index level."""
     size = len(key) + self.term_size + self.pointer_size
     stream, pointers, remaining = self.indexes[level]
-
 
     if size > remaining:
       # pad the rest with null bytes
@@ -411,7 +371,7 @@ class IndexWriter(object):
       stream.write(struct.pack(self.pointer_format, pointers))
 
       next_level = level + 1
-      if next_level > len(self.indexes)-1:
+      if next_level > len(self.indexes) - 1:
         self.push_index()
       self.add(next_level, key)
       remaining = self.block_size - self.pointer_size
@@ -425,13 +385,13 @@ class IndexWriter(object):
     self.indexes[level] = stream, pointers, remaining
 
   def push_index(self):
-    stream = SpooledTemporaryFile(max_size = 20*MB)
+    stream = SpooledTemporaryFile(max_size=20 * MB)
 
     pointers = 0
-    stream.write(struct.pack(OFFSET_FMT,pointers))
+    stream.write(struct.pack(OFFSET_FMT, pointers))
 
     self.indexes.append([
-      stream, pointers, self.block_size-self.pointer_size
+      stream, pointers, self.block_size - self.pointer_size
     ])
 
   def finish(self):
@@ -443,9 +403,7 @@ class IndexWriter(object):
     # blocks in the index
     out.write(struct.pack(OFFSET_FMT, 0))
 
-
     for stream, pointers, remaining in reversed(self.indexes):
-
       # pad the stream
       stream.write(self.terminator * remaining)
       level_length = stream.tell()
@@ -458,9 +416,11 @@ class IndexWriter(object):
 
       # loop through each pointer and key writing
       for o, key in PBTreeReader.parse(stream, self.block_size):
-        out.write(struct.pack(self.pointer_format, o+blocks_written+blocks_to_write))
-        # note: the last key in the block returned by the reader will be all null bytes
-        # pads
+        out.write(
+          struct.pack(
+            self.pointer_format, o + blocks_written + blocks_to_write))
+        # note: the last key in the block returned by the reader will
+        # be all null bytes pads
         out.write(key)
 
       blocks_written += blocks_to_write
@@ -468,20 +428,18 @@ class IndexWriter(object):
 
     out.seek(OFFSET_SIZE)
     out.write(struct.pack(OFFSET_FMT, blocks_written))
-    out.seek(0,2) # move to the end of the file
-
+    out.seek(0, 2)  # move to the end of the file
     self.blocks_written = blocks_written
-
 
   def close(self):
     self.finish()
 
+
 class DataBlockReader(object):
   def __init__(self, bytes, value_size, terminator='\0'):
-    self.bytes        = bytes
-    self.terminator   = terminator
-    self.value_size   = value_size
-
+    self.bytes = bytes
+    self.terminator = terminator
+    self.value_size = value_size
 
   def __iter__(self):
     block = self.bytes
@@ -491,22 +449,19 @@ class DataBlockReader(object):
       if pos == -1:
         break
       key = block[start:pos]
-      start=pos+1
+      start = pos + 1
 
       if key == '':
         return
       else:
-        value = block[start:start+self.value_size]
-        start+=self.value_size
-
+        value = block[start:start + self.value_size]
+        start += self.value_size
         yield key, value
-
 
 
 class IndexBlockReader(object):
   def __init__(self, data):
     self.data = data
-
 
   def __iter__(self):
     end_of_block = False
@@ -540,14 +495,12 @@ class IndexBlockReader(object):
     index = bisect.bisect(prefixes, key)
     return pointers[index]
 
-
   def read_offset(self, buffer):
 
     bytes = buffer.read(OFFSET_SIZE)
     # bytes should never be empty when reading an offset if so the file
     # corrupt
     return struct.unpack(OFFSET_FMT, bytes)[0]
-
 
   def read_key(self, buffer):
     buff = bytearray()

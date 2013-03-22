@@ -84,7 +84,7 @@ def main():
 
   reader = pbtree.PBTreeDictReader(
     mmap,
-    value_format="<QQIQI",
+    value_format='<QQIQI',
     item_keys=(
       'arcSourceSegmentId',
       'arcFileDate',
@@ -104,5 +104,5 @@ def main():
     pass
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   main()
