@@ -14,7 +14,6 @@ class TestIndexMapCase(unittest.TestCase):
     class P():
       pass
     params = P()
-
     results = []
     for partition_number, input in enumerate(inputs):
       params.last_key = None
@@ -22,7 +21,6 @@ class TestIndexMapCase(unittest.TestCase):
       for block in input:
         for item in map_block(iter(block), params):
           results.append(item)
-
     self.assertSequenceEqual(results, final)
 
 

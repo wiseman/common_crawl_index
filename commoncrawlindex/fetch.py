@@ -28,6 +28,9 @@ KEY_TMPL = ('/common-crawl/parse-output/segment/{arcSourceSegmentId}/'
 
 
 def arc_file(s3, bucket_name, info, decompress=True):
+  """Reads an ARC file (see
+  http://commoncrawl.org/data/accessing-the-data/).
+  """
   bucket = s3.lookup(bucket_name)
   keyname = KEY_TMPL.format(**info)
   key = bucket.lookup(keyname)
@@ -43,6 +46,7 @@ def arc_file(s3, bucket_name, info, decompress=True):
 
 
 def url_to_filename(url):
+  """Converts a URL to a valid filename."""
   return url.replace('/', '_')
 
 

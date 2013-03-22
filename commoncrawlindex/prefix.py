@@ -31,7 +31,7 @@ def commonlen(s1, s2):
 
 
 def common(s1, s2):
-  """Returns the  common prefix."""
+  """Returns the common prefix."""
   cl = commonlen(s1, s2)
   return s2[:cl]
 
