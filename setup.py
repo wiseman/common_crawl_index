@@ -27,7 +27,8 @@ settings = dict(
   packages=['commoncrawlindex'],
   test_suite='nose.collector',
   install_requires=[
-    'boto'
+    'boto',
+    'python-gflags'
     ],
   tests_require=[
     'nose'
@@ -44,8 +45,7 @@ settings = dict(
     ),
   entry_points={
     'console_scripts': [
-      'cci_lookup = commoncrawlindex.lookup:main',
-      'cci_fetch = commoncrawlindex.fetch:main'
+      'cci_lookup = commoncrawlindex.cli.cci_lookup:main',
       ],
     },
   )
