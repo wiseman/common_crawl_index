@@ -14,10 +14,7 @@
 #
 
 import bisect
-import os
-import mmap
 import struct
-import sys
 from tempfile import TemporaryFile, SpooledTemporaryFile
 from cStringIO import StringIO
 import itertools
@@ -61,7 +58,7 @@ class PBTreeWriter(object):
     prefix_key = prefix.significant(self.last_key, key)
     self.index_segment.add(0, prefix_key)
 
-  def on_item_exceeds_block_size(self, key, value):
+  def on_item_exceeds_block_size(self, key, unused_value):
     raise ValueError("key '%s' exceeds block size" % key)
 
   def commit(self):
@@ -171,7 +168,6 @@ class PBTreeReader(object):
     # linear scan through the block, looking for the position of the
     # stored key that is greater than the given key.
     start = 0
-    loc = 0
     while True:
       pos = data.find(self.terminator, start)
       if pos == -1:
@@ -202,7 +198,7 @@ class PBTreeReader(object):
     return list(self.keyiter(prefix))
 
   def keyiter(self, prefix=''):
-    for key, value in self.itemsiter(prefix):
+    for key, unused_value in self.itemsiter(prefix):
       if key.startswith(prefix):
         yield key
 
@@ -375,7 +371,7 @@ class IndexWriter(object):
     # blocks in the index
     out.write(struct.pack(OFFSET_FMT, 0))
 
-    for stream, pointers, remaining in reversed(self.indexes):
+    for stream, unused_pointers, remaining in reversed(self.indexes):
       # pad the stream
       stream.write(self.terminator * remaining)
       level_length = stream.tell()

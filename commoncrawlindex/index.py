@@ -1,8 +1,5 @@
 """High-level index access functions."""
 
-import struct
-
-import boto
 import gflags
 
 from commoncrawlindex import pbtree

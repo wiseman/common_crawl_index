@@ -8,7 +8,6 @@ import gzip
 import StringIO
 import sys
 
-import boto
 import gflags
 
 from commoncrawlindex import s3
