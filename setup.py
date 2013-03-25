@@ -13,7 +13,7 @@ import multiprocessing
 
 
 PACKAGE_NAME = 'commoncrawlindex'
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 
 settings = dict(
