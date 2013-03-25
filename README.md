@@ -108,7 +108,7 @@ files.  Here's how you would download every page the dataset has from
 metafilter.com:
 
 ```
-$ cci_fetch --output-to-file com.metafilter
+$ cci_fetch --output_to_file com.metafilter
 Fetching com.metafilter.ask/100000/Ideas-for-pureed-food-for-a-30something-who-is-really-picky:http
 Fetching com.metafilter.ask/100014/How-to-care-for-my-geek-husband:http
 Fetching com.metafilter.ask/100020/How-can-I-investigateremedy-possibly-misleading-loan-agreements-from-several-years-ago:http
@@ -119,7 +119,7 @@ If you're downloading lots of data, you may want to keep it in its
 compressed (gzipped) format:
 
 ```
-$ cci_fetch --compress --output-to-file com.metafilter
+$ cci_fetch --compress --output_to_file com.metafilter
 ```
 
 Here's how to download everything to individual gzipped files using 20
