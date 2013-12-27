@@ -13,7 +13,7 @@ import multiprocessing
 
 
 PACKAGE_NAME = 'commoncrawlindex'
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 
 
 settings = dict(
@@ -24,7 +24,7 @@ settings = dict(
   author='John Wiseman',
   author_email='jjwiseman@gmail.com',
   url='https://github.com/wiseman/common_crawl_index',
-  packages=['commoncrawlindex'],
+  packages=['commoncrawlindex', 'commoncrawlindex.cli'],
   test_suite='nose.collector',
   install_requires=[
     'boto',
