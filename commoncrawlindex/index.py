@@ -22,10 +22,7 @@ def open_index_stream(path=None):
     path(string): A local file path or an a3:// URI to an index file.
       Default is the value of --index_path.
   """
-  import logging
-  logging.basicConfig(level=logging.DEBUG)
   path = path or FLAGS.index_path
-  print 'PATH2 %s' % (path,)
   if s3.is_s3_uri(path):
     s3_conn = s3.get_s3_connection()
     stream = s3.BotoMap(s3_conn, path)
