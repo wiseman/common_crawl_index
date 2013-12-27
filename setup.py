@@ -27,7 +27,7 @@ settings = dict(
   packages=['commoncrawlindex', 'commoncrawlindex.cli'],
   test_suite='nose.collector',
   install_requires=[
-    'boto',
+    'boto==2.9.0',
     'python-gflags'
     ],
   tests_require=[
