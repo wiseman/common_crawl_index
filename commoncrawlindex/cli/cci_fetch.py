@@ -4,12 +4,14 @@ Usage:
   %s [options] <reversed URL prefix>...
 """
 
+import inspect
 import gzip
 import StringIO
 import sys
 
 import gflags
 
+from commoncrawlindex import cli
 from commoncrawlindex import s3
 from commoncrawlindex import index
 
@@ -56,18 +58,9 @@ def url_to_filename(url):
   return url.replace('/', '_')
 
 
-def main():
-  try:
-    argv = FLAGS(sys.argv)
-  except gflags.FlagsError, e:
-    sys.stderr.write('Error: %s\n%s%s\n' % (
-        e,
-        sys.modules[__name__].__doc__.replace('%s', sys.argv[0]),
-        FLAGS))
-    sys.exit(2)
+def main(argv):
   if len(argv) < 2:
-    sys.stderr.write('Error: Wrong number of arguments.\n')
-    sys.exit(1)
+    raise cli.UsageError('Wrong number of arguments.')
   index_reader = index.open_index_reader()
   s3_conn = s3.get_s3_connection()
   try:
@@ -87,5 +80,8 @@ def main():
     pass
 
 
+def cli_main():
+  cli.App(main=main, usage=inspect.getmodule(main).__doc__).run()
+
 if __name__ == '__main__':
-  main()
+  cli_main()

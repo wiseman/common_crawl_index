@@ -13,7 +13,7 @@ import multiprocessing
 
 
 PACKAGE_NAME = 'commoncrawlindex'
-VERSION = '0.0.6'
+VERSION = '0.0.7'
 
 
 settings = dict(
@@ -44,8 +44,8 @@ settings = dict(
     ),
   entry_points={
     'console_scripts': [
-      'cci_lookup = commoncrawlindex.cli.cci_lookup:main',
-      'cci_fetch = commoncrawlindex.cli.cci_fetch:main'
+      'cci_lookup = commoncrawlindex.cli.cci_lookup:cli_main',
+      'cci_fetch = commoncrawlindex.cli.cci_fetch:cli_main'
       ],
     },
   )
