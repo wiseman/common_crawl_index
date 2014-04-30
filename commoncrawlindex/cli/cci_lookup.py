@@ -6,7 +6,7 @@ Usage:
 """
 
 import inspect
-import sys
+import json
 
 import gflags
 
@@ -18,7 +18,8 @@ FLAGS = gflags.FLAGS
 gflags.DEFINE_boolean(
   'print_metadata',
   False,
-  'Print metadata for each URL.',
+  ('Print metadata for each URL. Metadata is in JSON format and is separated '
+   'from the URL with a tab character.'),
   short_name='m')
 
 
@@ -29,7 +30,7 @@ def main(argv):
   try:
     for url, d in index_reader.itemsiter(argv[1]):
       if FLAGS.print_metadata:
-        print url, d
+        print '%s\t%s' % (url, json.dumps(d))
       else:
         print url
   except KeyboardInterrupt:
