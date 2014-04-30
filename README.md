@@ -70,6 +70,8 @@ com.metafilter.projects/3042/GLTICH-Karaoke:http
 [etc.]
 ```
 
+#### Metadata
+
 You can also display the metadata associated with each URL:
 
 ```
