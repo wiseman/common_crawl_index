@@ -70,6 +70,65 @@ com.metafilter.projects/3042/GLTICH-Karaoke:http
 [etc.]
 ```
 
+You can also display the metadata associated with each URL:
+
+```
+$ cci_lookup --print_metadata com.metafilter.projects/3
+com.metafilter.projects/3012/You-are-listening-to-Los-Angeles:http	{"compressedSize": 7702, "arcSourceSegmentId": 1346876860782, "arcFilePartition": 4245, "arcFileDate": 1346908921144, "arcFileOffset": 1850172}
+com.metafilter.projects/3031/RetCon-Artists-Improving-the-Future-by-Improving-the-Past:http	{"compressedSize": 6464, "arcSourceSegmentId": 1346876860782, "arcFilePartition": 4245, "arcFileDate": 1346908597590, "arcFileOffset": 93006430}
+com.metafilter.projects/3042/GLTICH-Karaoke:http	{"compressedSize": 6015, "arcSourceSegmentId": 1346876860782, "arcFilePartition": 3331, "arcFileDate": 1346908329648, "arcFileOffset": 88640475}
+[etc.]
+```
+
+Metadata is in JSON format and is separated from the URL by a tab
+character.  Say you want to use Hadoop to process common crawl data
+for a single site.  You don't need to process every source segment,
+but which ones do you need?  Here's one way to find out (using
+[jq](http://stedolan.github.io/jq/)):
+
+```
+$ cci_lookup --print_metadata com.metafilter |
+    awk -F '\t' '{print $2;}' |
+    jq '.arcSourceSegmentId' |
+    sort |
+    uniq -c |
+    sort -rn
+
+  21439 1346876860765
+  20182 1346876860838
+  18223 1346876860840
+  13568 1346876860819
+   8843 1346876860614
+   8717 1346876860807
+   6748 1346876860877
+   6580 1346876860817
+   3822 1346823846176
+   1662 1346876860782
+   1480 1346876860648
+   1476 1346876860609
+   1055 1346876860804
+    979 1346876860843
+    935 1346876860798
+    912 1346876860493
+    633 1346823845675
+    537 1346876860454
+    409 1346876860795
+    296 1346876860567
+    232 1346876860828
+    226 1346876860445
+     44 1346823846125
+     42 1346823846039
+      2 1346876860779
+      2 1346876860777
+      1 1346876860774
+      1 1346876860611
+      1 1346823846150
+```
+
+That's 29 different segments, which is only about half of the
+[58 total valid segments](https://s3.amazonaws.com/aws-publicdatasets/common-crawl/parse-output/valid_segments.txt).
+
+
 ### Fetching URLs
 
 You can fetch URLs from the Common Crawl dataset using `cci_fetch`.
