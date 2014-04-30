@@ -8,6 +8,11 @@ Index](http://commoncrawl.org/common-crawl-url-index/) and the [Common
 Crawl
 dataset](https://commoncrawl.atlassian.net/wiki/display/CRWL/About+the+Data+Set).
 
+This is a pretty significant fork of
+[trivio/common_crawl_index](https://github.com/trivio/common_crawl_index),
+created with the goal of being easier to use.
+
+
 ## Installation
 
 From github:
