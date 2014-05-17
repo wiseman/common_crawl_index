@@ -188,8 +188,23 @@ compressed (gzipped) format:
 $ cci_fetch --compress --output_to_file com.metafilter
 ```
 
-Here's how to download everything to individual gzipped files using 20
-parallel `cci_fetch` processes:
+If you're wondering how much disk space this will use, you can check
+the metadata and sum the compressed size of every file:
+
+```
+$ cci_lookup --print_metadata com.metafilter |
+  awk -F '\t' '{print $2;}' |
+  jq '.compressedSize'  |
+  awk '{ sum+=$1} END {print sum}'
+1252326930
+```
+
+It's a little more than 1 GB in compresed form, which isn't too not bad.
+
+
+To speed up the download you can use multiple processes.  Here's how
+to download everything to individual gzipped files using 20 parallel
+`cci_fetch` processes:
 
 ```
 $ cci_lookup com.metafilter | xargs -d '\n' -n 100 -P 20 cci_fetch -C -O
