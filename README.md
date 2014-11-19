@@ -195,7 +195,7 @@ the metadata and sum the compressed size of every file:
 $ cci_lookup --print_metadata com.metafilter |
   awk -F '\t' '{print $2;}' |
   jq '.compressedSize'  |
-  awk '{ sum+=$1} END {print sum}'
+  awk '{sum+=$1;} END {print sum;}'
 1252326930
 ```
 
