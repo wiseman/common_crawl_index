@@ -199,7 +199,7 @@ $ cci_lookup --print_metadata com.metafilter |
 1252326930
 ```
 
-It's a little more than 1 GB in compresed form, which isn't too not bad.
+It's a little more than 1 GB in compressed form, which isn't too not bad.
 
 
 To speed up the download you can use multiple processes.  Here's how
