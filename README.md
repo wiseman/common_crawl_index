@@ -1,3 +1,9 @@
+# DO NOT USE THIS CODE.
+
+The index this code uses is broken, see https://github.com/trivio/common_crawl_index/issues/13
+
+A new index has been created, see https://github.com/ikreymer/cdx-index-client for more information.
+
 # commoncrawlindex
 
 Common Crawl is an open repository of web crawl data that can be
